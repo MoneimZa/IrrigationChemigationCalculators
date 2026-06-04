@@ -47,7 +47,6 @@ button.secondary{background:var(--soft);color:var(--green2);border:1px solid var
 <body>
 <main class="wrap">
 <section class="hero"><h1>Young and Mature Orchard Irrigation and Chemigation Calculator</h1></section>
-
 <nav class="tabs">
   <button class="tab-btn active" data-tab="need">Irrigation need</button>
   <button class="tab-btn" data-tab="runtime">Run time</button>
@@ -77,11 +76,10 @@ button.secondary{background:var(--soft);color:var(--green2);border:1px solid var
         <div><label>Effective rainfall (inches)</label><input id="rain" type="number" step="0.01" value="0"></div>
         <div><label>Application efficiency (%)</label><input id="appEff" type="number" step="1" value="85"></div>
         <div><label>Irrigation target (%)</label><input id="deficit" type="number" step="1" value="100"></div>
-        <div><label>Total orchard/block area (acres)</label><input id="totalArea" type="number" step="0.1" value="20"></div>
-        <div><label>Wetted area (% of total area)</label><input id="wettedPct" type="number" step="1" value="100"></div>
+        <div><label>Total irrigated orchard/block area (acres)</label><input id="totalArea" type="number" step="0.1" value="20"></div>
       </div>
       <div class="actions"><button class="primary" onclick="calcNeed()">Calculate</button></div>
-      <div class="formula">Adjusted ETc = mature ETc × the crop/tree-age adjustment. Irrigated acres = total area × wetted area %. Irrigation depth to apply = net irrigation ÷ application efficiency.</div>
+      <div class="formula">Adjusted ETc = mature ETc × the crop/tree-age adjustment. Irrigated acres = total orchard/block acres. Irrigation depth to apply = net irrigation ÷ application efficiency. Wetted area is not used in this calculation.</div>
       <div class="note">Use this as a planning estimate. Check and adjust the recommendation with soil moisture sensors, field observations, and plant-based methods such as stem water potential, pressure chamber readings, microtensiometers, or canopy/leaf water-stress observations.</div>
     </div>
     <aside class="panel">
@@ -102,17 +100,16 @@ button.secondary{background:var(--soft);color:var(--green2);border:1px solid var
   <div class="grid">
     <div class="panel">
       <h2>Irrigation run time</h2>
-      <p class="hint">Estimate how long to run the system to apply a target net irrigation depth over the wetted/irrigated portion of the orchard. Application efficiency is used to estimate the gross depth and total runtime.</p>
+      <p class="hint">Estimate how long to run the system to apply a target net irrigation depth over the total irrigated orchard/block acres. Application efficiency is used to estimate the gross depth and total runtime.</p>
       <div class="form">
         <div><label>Target net irrigation depth (inches)</label><input id="rtDepth" type="number" step="0.01" value="1.50"></div>
-        <div><label>Total orchard/block area (acres)</label><input id="rtArea" type="number" step="0.1" value="20"></div>
-        <div><label>Wetted area (% of total area)</label><input id="rtWet" type="number" step="1" value="100"></div>
+        <div><label>Total irrigated orchard/block area (acres)</label><input id="rtArea" type="number" step="0.1" value="20"></div>
         <div><label>Application efficiency (%)</label><input id="rtEff" type="number" step="1" value="85"></div>
         <div><label>System flow rate (gpm)</label><input id="rtFlow" type="number" step="1" value="900"></div>
         <div><label>Number of sets/zones</label><input id="rtSets" type="number" step="1" value="1"></div>
       </div>
       <div class="actions"><button class="primary" onclick="calcRuntime()">Calculate</button></div>
-      <div class="formula">Gross depth needed = target net depth ÷ application efficiency. Runtime = gross depth × irrigated acres × 27,154 gallons per acre-inch ÷ system flow rate.</div>
+      <div class="formula">Gross depth needed = target net depth ÷ application efficiency. Runtime = gross depth × total irrigated acres × 27,154 gallons per acre-inch ÷ system flow rate. Wetted area is not used.</div>
       <div class="note">Confirm run time with actual pressure, flow meter readings, emitter output, distribution uniformity, soil moisture sensors, and plant-based stress measurements.</div>
     </div>
     <aside class="panel">
@@ -131,20 +128,21 @@ button.secondary{background:var(--soft);color:var(--green2);border:1px solid var
   <div class="grid">
     <div class="panel">
       <h2>Run time from ET and application rate</h2>
-      <p class="hint">Calculate weekly or event run time from ETc, irrigation efficiency, and drip-system application rate. If you already know the application rate, enter it in the optional field. If not, the calculator will estimate it from tree spacing, emitters per tree, and emitter flow.</p>
+      <p class="hint">Calculate weekly or event run time from ETc or net irrigation amount, application efficiency, and micro-irrigation application rate. If you already know the application rate, enter it directly. Otherwise, estimate it from tree spacing, emitters per tree, and emitter discharge.</p>
       <div class="form">
-        <div><label>ETc for irrigation period (inches)</label><input id="etEtc" type="number" step="0.01" value="1.50"></div>
+        <div><label>ETc or net irrigation amount for the period (inches)</label><input id="etEtc" type="number" step="0.01" value="1.50"></div>
         <div><label>Application efficiency (%)</label><input id="etEff" type="number" step="1" value="90"></div>
         <div><label>Known application rate, optional (inches/hour)</label><input id="etKnownAppRate" type="number" step="0.001" value=""></div>
         <div><label>Number of irrigations in this period</label><input id="etEvents" type="number" min="1" step="1" value="1"></div>
         <div><label>Tree spacing within row (ft)</label><input id="etTreeSpacing" type="number" step="0.1" value="15"></div>
         <div><label>Row spacing (ft)</label><input id="etRowSpacing" type="number" step="0.1" value="20"></div>
-        <div><label>Emitters per tree</label><input id="etEmitters" type="number" step="0.1" value="12"></div>
-        <div><label>Emitter flow rate (gph)</label><input id="etEmitterFlow" type="number" step="0.01" value="0.5"></div>
+        <div><label>Emitters or microsprinklers per tree</label><input id="etEmitters" type="number" step="0.1" value="12"></div>
+        <div><label>Average emitter flow rate, if known (gph)</label><input id="etEmitterFlow" type="number" step="0.01" value="0.50"></div>
+        <div><label>Collected water in 30 seconds, optional (mL/emitter)</label><input id="etMl30" type="number" step="1" value=""></div>
       </div>
       <div class="actions"><button class="primary" onclick="calcEtRuntime()">Calculate</button></div>
-      <div class="formula">Trees per acre = 43,560 ÷ (tree spacing × row spacing). Gallons/hour/acre = trees/acre × emitters/tree × emitter gph. Application rate = gallons/hour/acre ÷ 27,154. Gross irrigation required = ETc ÷ irrigation efficiency. Run time = gross irrigation required ÷ application rate.</div>
-      <div class="note">Example: 15 × 20 ft spacing, 12 emitters/tree, 0.5 gph emitters, 1.50 inches ETc, and 90% efficiency gives about 0.032 inches/hour and about 52 hours/week.</div>
+      <div class="formula">Emitter gph = mL collected in 30 seconds × 0.032. Average tree discharge = emitters per tree × emitter gph. Application rate, inches/hour = average tree discharge ÷ tree spacing, ft² × 1.6. Gross irrigation required = ETc ÷ application efficiency. Run time = gross irrigation required ÷ application rate.</div>
+      <div class="note">Example: 15 × 20 ft spacing, 12 emitters/tree, 0.5 gph emitters, 1.50 inches ETc, and 90% efficiency gives an application rate of about 0.032 inches/hour and about 52 hours for the period.</div>
     </div>
     <aside class="panel">
       <div class="result"><span id="etRtHours" class="big">—</span><span class="unit">hours for irrigation period</span></div>
@@ -152,6 +150,9 @@ button.secondary{background:var(--soft);color:var(--green2);border:1px solid var
         <div class="box"><strong id="etRtPerIrr">—</strong><span>Hours per irrigation</span></div>
         <div class="box"><strong id="etGross">—</strong><span>Gross irrigation required, inches</span></div>
         <div class="box"><strong id="etAppRate">—</strong><span>Application rate, inches/hour</span></div>
+        <div class="box"><strong id="etTreeDischarge">—</strong><span>Average tree discharge, gph/tree</span></div>
+        <div class="box"><strong id="etEmitterGph">—</strong><span>Emitter discharge used, gph</span></div>
+        <div class="box"><strong id="etSpacingFt2">—</strong><span>Tree spacing, ft²/tree</span></div>
         <div class="box"><strong id="etTreesAc">—</strong><span>Trees per acre</span></div>
         <div class="box"><strong id="etGphAc">—</strong><span>Gallons/hour/acre</span></div>
         <div class="box"><strong id="etMethod">—</strong><span>Application rate source</span></div>
@@ -190,16 +191,15 @@ button.secondary{background:var(--soft);color:var(--green2);border:1px solid var
   <div class="grid">
     <div class="panel">
       <h2>Water applied</h2>
-      <p class="hint">Use this after irrigation to estimate gross and net depth applied.</p>
+      <p class="hint">Use this after irrigation to estimate gross and net depth applied over the total irrigated orchard/block acres.</p>
       <div class="form">
         <div><label>System flow rate (gpm)</label><input id="dFlow" type="number" step="1" value="900"></div>
         <div><label>Runtime (hours)</label><input id="dHours" type="number" step="0.1" value="15"></div>
-        <div><label>Total orchard/block area (acres)</label><input id="dArea" type="number" step="0.1" value="20"></div>
-        <div><label>Wetted area (% of total area)</label><input id="dWet" type="number" step="1" value="100"></div>
+        <div><label>Total irrigated orchard/block area (acres)</label><input id="dArea" type="number" step="0.1" value="20"></div>
         <div><label>Application efficiency (%)</label><input id="dEff" type="number" step="1" value="85"></div>
       </div>
       <div class="actions"><button class="primary" onclick="calcDepth()">Calculate</button></div>
-      <div class="formula">Gross depth = flow × hours × 60 ÷ 27,154 ÷ irrigated acres. Net useful depth = gross depth × application efficiency.</div>
+      <div class="formula">Gross depth = flow × hours × 60 ÷ 27,154 ÷ total irrigated acres. Net useful depth = gross depth × application efficiency. Wetted area is not used.</div>
     </div>
     <aside class="panel">
       <div class="result"><span id="dGross" class="big">—</span><span class="unit">inches gross applied</span></div>
@@ -426,13 +426,13 @@ button.secondary{background:var(--soft);color:var(--green2);border:1px solid var
 
 <script>
 const ACRE_INCH_GAL=27154,GAL_TO_L=3.78541,LB_TO_KG=.45359237;
-const n=id=>{const x=parseFloat(document.getElementById(id).value);return Number.isFinite(x)?x:0};
-const val=id=>document.getElementById(id).value;
+const n=id=>{const el=document.getElementById(id);if(!el)return 0;const x=parseFloat(el.value);return Number.isFinite(x)?x:0};
+const val=id=>{const el=document.getElementById(id);return el?el.value:''};
 function out(id,x,d=2){const e=document.getElementById(id);if(!e)return;e.textContent=Number.isFinite(x)?x.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}):'—'}
 function outInt(id,x){const e=document.getElementById(id);if(!e)return;e.textContent=Number.isFinite(x)?Math.round(x).toLocaleString():'—'}
 function outText(id,t){const e=document.getElementById(id);if(!e)return;e.textContent=t}
 function cropAgeInfo(cropId,ageId){const crop=val(cropId),age=Math.max(1,Math.round(n(ageId)));const almond={1:.40,2:.55,3:.75,4:.90},walnut={1:.30,2:.50,3:.85,4:1};if(crop==='almond'){const factor=almond[age]||1;return{factor:factor,label:age<=4?`Almond, year ${age}`:'Almond, mature/older trees'}}if(crop==='walnut'){const factor=walnut[age]||1;return{factor:factor,label:age<=4?`Walnut, year ${age}`:'Walnut, mature/older trees'}}if(crop==='other')return{factor:1,label:'Other crop, mature trees/no age adjustment'};return{factor:1,label:'No age adjustment'}}
-const div=(a,b)=>b===0?NaN:a/b,pct=x=>Math.max(x,0)/100,acres=(a,w)=>a*pct(w);
+const div=(a,b)=>b===0?NaN:a/b,pct=x=>Math.max(x,0)/100;
 function areaToAcres(x,u){return x*({acre:1,sqin:1/6272640,sqft:1/43560,ha:2.47105,sqcm:2.47105e-8,sqm:.000247105,sqyd:1/4840,sqkm:247.105,sqmile:640}[u]||1)}
 function timeToHours(x,u){return x*({sec:1/3600,min:1/60,hr:1,day:24}[u]||1)}
 function volRateToGalAc(x,u){return x*({gal_ac:1,qt_ac:.25,pt_ac:.125,floz_ac:1/128,l_ha:.264172/2.47105,l_sqm:.264172/.000247105,gal_sqft:43560,qt_sqft:.25*43560,pt_sqft:.125*43560,floz_sqft:43560/128}[u]||1)}
@@ -444,11 +444,11 @@ function volGal(x,u){return x*({gal:1,ukgal:1.20095,cuin:1/231,cuft:7.48052,cuyd
 function flowGph(x,u){return x*({gph:1,gpm:60,gpd:1/24,lph:1/GAL_TO_L,lpd:1/(GAL_TO_L*24),lpm:60/GAL_TO_L,lps:3600/GAL_TO_L,cms:264.172*3600,mlmin:60*.000264172,cfm:7.48052*60,cfs:448.831*60,cumhr:264.172,cuydmin:201.974*60,mgd:1000000/24,acin_day:ACRE_INCH_GAL/24,acin_hr:ACRE_INCH_GAL,acft_day:ACRE_INCH_GAL*12/24}[u]||1)}
 const flowGpm=(x,u)=>flowGph(x,u)/60;
 
-function calcNeed(){let info=cropAgeInfo('cropType','treeAge'),adj=n('matureEtc')*info.factor,net=Math.max(adj*pct(n('deficit'))-n('rain'),0),gross=div(net,pct(n('appEff'))),a=acres(n('totalArea'),n('wettedPct'));out('adjEtc',adj);out('netNeed',net);out('grossNeed',gross);out('irrigatedAcres',a);out('needAcft',gross*a/12);outInt('needGal',gross*a*ACRE_INCH_GAL);outText('factorOut',info.label)}
-function calcRuntime(){let a=acres(n('rtArea'),n('rtWet')),grossDepth=div(n('rtDepth'),pct(n('rtEff'))),gal=grossDepth*a*ACRE_INCH_GAL,total=div(gal,n('rtFlow')*60),per=total/Math.max(n('rtSets'),1);out('rtHours',per,1);out('rtPumpHours',total,1);outInt('rtGal',gal);out('rtAcres',a);out('rtGrossDepth',grossDepth)}
-function calcEtRuntime(){let gross=div(n('etEtc'),pct(n('etEff'))),known=n('etKnownAppRate'),trees=div(43560,n('etTreeSpacing')*n('etRowSpacing')),gphAc=trees*n('etEmitters')*n('etEmitterFlow'),calcRate=div(gphAc,ACRE_INCH_GAL),appRate=known>0?known:calcRate,runtime=div(gross,appRate),events=Math.max(n('etEvents'),1);out('etRtHours',runtime,1);out('etRtPerIrr',runtime/events,1);out('etGross',gross);out('etAppRate',appRate,3);outInt('etTreesAc',trees);outInt('etGphAc',known>0?known*ACRE_INCH_GAL:gphAc);outText('etMethod',known>0?'Known application rate entered':'Calculated from drip design')}
-function calcDepth(){let a=acres(n('dArea'),n('dWet')),gross=div(n('dFlow')*n('dHours')*60,ACRE_INCH_GAL*a);out('dGross',gross);out('dNet',gross*pct(n('dEff')));out('dAcft',gross*a/12);out('dAcres',a)}
+function calcNeed(){let info=cropAgeInfo('cropType','treeAge'),adj=n('matureEtc')*info.factor,net=Math.max(adj*pct(n('deficit'))-n('rain'),0),gross=div(net,pct(n('appEff'))),a=n('totalArea');out('adjEtc',adj);out('netNeed',net);out('grossNeed',gross);out('irrigatedAcres',a);out('needAcft',gross*a/12);outInt('needGal',gross*a*ACRE_INCH_GAL);outText('factorOut',info.label)}
+function calcRuntime(){let a=n('rtArea'),grossDepth=div(n('rtDepth'),pct(n('rtEff'))),gal=grossDepth*a*ACRE_INCH_GAL,total=div(gal,n('rtFlow')*60),per=total/Math.max(n('rtSets'),1);out('rtHours',per,1);out('rtPumpHours',total,1);outInt('rtGal',gal);out('rtAcres',a);out('rtGrossDepth',grossDepth)}
+function calcEtRuntime(){let gross=div(n('etEtc'),pct(n('etEff'))),known=n('etKnownAppRate'),spacingFt2=n('etTreeSpacing')*n('etRowSpacing'),trees=div(43560,spacingFt2),ml30=n('etMl30'),emitterGph=ml30>0?ml30*.032:n('etEmitterFlow'),treeDischarge=n('etEmitters')*emitterGph,gphAc=treeDischarge*trees,calcRate=div(treeDischarge,spacingFt2)*1.6,appRate=known>0?known:calcRate,runtime=div(gross,appRate),events=Math.max(n('etEvents'),1);out('etRtHours',runtime,1);out('etRtPerIrr',runtime/events,1);out('etGross',gross);out('etAppRate',appRate,3);out('etTreeDischarge',treeDischarge,2);out('etEmitterGph',emitterGph,3);out('etSpacingFt2',spacingFt2,0);outInt('etTreesAc',trees);outInt('etGphAc',known>0?known*ACRE_INCH_GAL:gphAc);outText('etMethod',known>0?'Known application rate entered':(ml30>0?'Calculated from 30-second catch and tree spacing':'Calculated from emitter discharge and tree spacing'))}
 function calcAppRate(){let flowGPM=flowGpm(n('arFlow'),val('arFlowUnit')),areaAc=areaToAcres(n('arArea'),val('arAreaUnit')),inHr=div(flowGPM*60,ACRE_INCH_GAL*areaAc);out('arInHr',inHr,3);out('arInDay',inHr*24,2);out('arMmHr',inHr*25.4,2);out('arMmDay',inHr*24*25.4,1);out('arHoursInch',div(1,inHr),1)}
+function calcDepth(){let a=n('dArea'),gross=div(n('dFlow')*n('dHours')*60,ACRE_INCH_GAL*a);out('dGross',gross);out('dNet',gross*pct(n('dEff')));out('dAcft',gross*a/12);out('dAcres',a)}
 function calcFreq(){let adj=n('fEtc'),total=n('awhc')*n('root'),allow=total*pct(n('mad'));out('fDays',div(allow,adj),1);out('fAdj',adj);out('fAllow',allow);out('fTotal',total)}
 function calcVol(){let total=volRateToGalAc(n('vRate'),val('vRateUnit'))*areaToAcres(n('vArea'),val('vAreaUnit')),gph=div(total,timeToHours(n('vTime'),val('vTimeUnit')));out('vGph',gph);out('vGpm',gph/60);out('vLph',gph*GAL_TO_L);out('vTotalGal',total);out('vTotalL',total*GAL_TO_L)}
 function calcMass(){let lb=massRateLbAc(n('mRate'),val('mRateUnit'))*areaToAcres(n('mArea'),val('mAreaUnit')),gal=div(lb,concLbGal(n('mConc'),val('mConcUnit'))),gph=div(gal,timeToHours(n('mTime'),val('mTimeUnit')));out('mGph',gph);out('mTotalLb',lb);out('mTotalKg',lb*LB_TO_KG);out('mSolGal',gal);out('mLph',gph*GAL_TO_L)}
